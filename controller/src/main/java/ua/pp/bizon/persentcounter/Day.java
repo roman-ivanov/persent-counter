@@ -37,6 +37,10 @@ public class Day {
     public Date getBillingDate() {
         return billingDate;
     }
+    
+    public List<Payment> getPayments() {
+        return payments;
+    }
 
     public double getBalanceEndDay() {
         if (balanse == null) {
@@ -62,10 +66,14 @@ public class Day {
         return  Utils.round(flowFounds, 2);
     }
 
+    public String toStringNext() {
+        return toStringNoNext() +  (next == null ? "" : "\n" + next);
+    }
+    
     @Override
     public String toString() {
-        return "" + dateToString(billingDate) + " " + (prev == null ? "startBalanse=" + startBalance : "counted=" + getBalanceEndDay()) + ", persentsFarDay="
-                + getPersentsCountedForDay() + ", motion=" + calculateFlowFounds() + paymentsToString() +  (next == null ? "" : "\n" + next);
+        // TODO Auto-generated method stub
+        return toStringNoNext();
     }
     
     
@@ -113,6 +121,9 @@ public class Day {
 
     public void setNext(Day next) {
         this.next = next;
+        next.prev = this;
+        next.balanse = null;
+        next.startBalance = null;
     }
 
 }

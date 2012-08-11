@@ -11,6 +11,21 @@ public class Payment {
     private String currecy;
     private Double billingAmount;
     private Double processingAmount;
+    
+    public Payment() {
+    }
+    
+
+    public Payment(Date holdingData, Date processingData, String description, String currecy, Double billingAmount, Double processingAmount) {
+        super();
+        this.holdingData = holdingData;
+        this.processingData = processingData;
+        this.description = description;
+        this.currecy = currecy;
+        this.billingAmount = billingAmount;
+        this.processingAmount = processingAmount;
+    }
+
 
     public Date getHoldingData() {
         return holdingData;

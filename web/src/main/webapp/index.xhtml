@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+    <title>statement</title>
+</h:head>
+<h:body>
+    <br></br>
+    <h2>statement</h2>
+    <hr />
+    <h:form enctype="multipart/form-data">
+        <h:outputText value="select file" />
+        <t:inputFileUpload id="fileupload" accept="*/*" value="#{statement.upFile}" storage="file" styleClass="fileUploadInput" required="true"
+            maxlength="200000" />
+        <h:message for="fileupload" showDetail="true" />
+        <h:commandButton value="upload" action="#{statement.upload}" />
+    </h:form>
+    <h:form >
+         <h:commandButton value="clear uploaded data" action="#{statement.clear}" />
+    </h:form>
+    <hr />
+    #{statement.uploaded}
+    <br />
+    <br />
+    <c:if test="#{statement.uploaded}">
+    Billing:
+        <ul>
+            <c:forEach items="#{statement.controller.billingPeriods}" var="i">
+                <li>Billing period: from: #{i.fromDate} to: #{i.toDate} <h:form>Persents:
+                    <h:inputText value="#{i.persents}"></h:inputText>
+                        <h:commandButton value="set" action="#{i.calculate}" />
+                    </h:form> Days:
+                    <ul>
+                        <c:forEach items="#{i.days}" var="day">
+                            <li>Day: #{day.billingDate} billing balance: #{day.balanceEndDay} persents for day: #{day.persentsCountedForDay}
+                                <ul>
+                                    <c:forEach items="#{day.payments}" var="p">
+                                        <li>#{p}</li>
+                                    </c:forEach>
+                                </ul>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </li>
+            </c:forEach>
+        </ul>
+        <hr />
+    </c:if>
+</h:body>
+</html>

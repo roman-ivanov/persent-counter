@@ -31,7 +31,7 @@ public class PaymentFactory {
         return payments;
     }
 
-    protected static void read(Document  document, LinkedList<Payment> result) throws SAXException, IOException, ParserConfigurationException {
+    public static void read(Document  document, LinkedList<Payment> result) throws SAXException, IOException, ParserConfigurationException {
         Node table = document.getDocumentElement().getElementsByTagName("s:Table").item(0);
         NodeList tableList = table.getChildNodes();
         for (int i = 0; i < tableList.getLength(); i++){
@@ -45,8 +45,15 @@ public class PaymentFactory {
         }
     }
     
+    public static LinkedList<Payment> read(Document  document) throws SAXException, IOException, ParserConfigurationException {
+        LinkedList<Payment>list = new LinkedList<Payment>();
+        read(document, list);
+        Utils.sort(list);
+        return list;
+    }
+
     protected static Payment process(Node row, int i) {
-        Payment p = new Payment();
+        
         StringBuffer message = new StringBuffer( i + "\t");
         for (int j = 0; j < row.getChildNodes().getLength(); j++){
             if (row.getChildNodes().item(j).getNodeName().equals("s:Cell")){
@@ -64,7 +71,12 @@ public class PaymentFactory {
             }
         }
         log.trace("read line: " + message);
-        String[] splitData = message.toString().split("\t");
+        return split(message.toString());
+    }
+
+    public static Payment split(String message) {
+        Payment p = new Payment();
+        String[] splitData = message.split("\t");
         if (splitData.length > 1 &&    splitData[1].matches("[0-2][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]")){
             try {
                 p.setHoldingData(new SimpleDateFormat("yyyy-MM-dd").parse(splitData[1]));
@@ -75,10 +87,8 @@ public class PaymentFactory {
                 p.setBillingAmount(Double.valueOf(splitData[5].isEmpty() ? "-" + splitData[6]: splitData[5]));
                 return p;
             } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
-           
         }
         return null;
     }

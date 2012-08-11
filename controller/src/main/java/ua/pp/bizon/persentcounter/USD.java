@@ -26,6 +26,7 @@ public class USD {
      * @throws SAXException 
      * @throws ParseException 
      */
+    @SuppressWarnings("deprecation")
     public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException, ParseException {
         Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%p %c %x - %m%n")));
         Logger.getRootLogger().setLevel(Level.TRACE);

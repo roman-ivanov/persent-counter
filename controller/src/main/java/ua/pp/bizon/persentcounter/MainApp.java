@@ -23,9 +23,9 @@ import org.xml.sax.SAXException;
 public class MainApp {
 
     static final Log log = LogFactory.getLog(MainApp.class);
-    
+
     public MainApp() {
-System.out.println("mainApp constructor");
+        System.out.println("mainApp constructor");
     }
 
     /**
@@ -88,6 +88,7 @@ System.out.println("mainApp constructor");
         sortPayments();
     }
 
+    @Deprecated
     public List<Persents> countPersents(double rate, int countDaysInYear, List<Persents> countedPersents) throws ParseException {
         prepareStatement();
         statement.count(rate, countDaysInYear, countedPersents);
@@ -104,16 +105,16 @@ System.out.println("mainApp constructor");
     }
 
     public Statement prepareStatement() {
-        // if (statement == null) {
-        sortPayments();
-        statement = new Statement();
-        if (payments.size() > 0) {
-            statement.init(payments.getFirst().getProcessingData(), payments.getLast().getProcessingData(), startAccountState);
-            for (Payment i : payments) {
-                statement.addPayment(i);
+        if (statement == null) {
+            sortPayments();
+            statement = new Statement();
+            if (payments.size() > 0) {
+                statement.init(payments.getFirst().getProcessingData(), payments.getLast().getProcessingData(), startAccountState);
+                for (Payment i : payments) {
+                    statement.addPayment(i);
+                }
             }
         }
-        // }
         return statement;
     }
 
@@ -125,5 +126,6 @@ System.out.println("mainApp constructor");
     public int length() {
         return payments == null ? 0 : payments.size();
     }
+
 
 }

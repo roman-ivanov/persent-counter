@@ -3,6 +3,7 @@ package ua.pp.bizon.persentcounter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -50,7 +51,7 @@ public class Statement {
     private Log log = LogFactory.getLog(getClass());
 
     public void count(double persent, int billingDayOfYearCount, List<Persents> billingDays) throws ParseException {
-        for (Persents p: billingDays){
+        for (Persents p : billingDays) {
             count(persent, billingDayOfYearCount, p);
         }
     }
@@ -85,8 +86,17 @@ public class Statement {
                 return round(i.getBalanceEndDay(), 2);
             }
         }
-        ;
         return Double.NaN;
+    }
+
+    public List<Day> getBillingList() {
+        List<Day> list = new LinkedList<Day>();
+        for (Day i = persents; i != null; i = i.getNext()) {
+            if (i.getNext() == null) {
+                list.add(i);
+            }
+        }
+        return list;
     }
 
 }
