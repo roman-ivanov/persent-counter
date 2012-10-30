@@ -7,17 +7,16 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import ua.pp.bizon.persentcounter.controller.Persents;
+
+@Deprecated
 public class USD {
     
-    private static Log log = LogFactory.getLog(USD.class);
+    private static Logger log = LoggerFactory.getLogger(USD.class);
 
     /**
      * @param args
@@ -26,10 +25,9 @@ public class USD {
      * @throws SAXException 
      * @throws ParseException 
      */
-    @SuppressWarnings("deprecation")
     public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException, ParseException {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%p %c %x - %m%n")));
-        Logger.getRootLogger().setLevel(Level.TRACE);
+        //Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%p %c %x - %m%n")));
+        //Logger.getRootLogger().setLevel(Level.TRACE);
         MainApp app = new MainApp();
         app.configure("Operations (4).xls");
         app.setStartAccountState(0);

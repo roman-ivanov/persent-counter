@@ -11,18 +11,19 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import ua.pp.bizon.persentcounter.controller.Payment;
+import ua.pp.bizon.persentcounter.controller.Persents;
+import ua.pp.bizon.persentcounter.controller.excel.ExcelPaymentFactory;
+
+@Deprecated
 public class MainApp {
 
-    static final Log log = LogFactory.getLog(MainApp.class);
+    static final Logger log = LoggerFactory.getLogger(MainApp.class);
 
     public MainApp() {
         System.out.println("mainApp constructor");
@@ -36,8 +37,8 @@ public class MainApp {
      * @throws ParseException
      */
     public static void main(String[] args) throws SAXException, IOException, ParserConfigurationException, ParseException {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%p %c %x - %m%n")));
-        Logger.getRootLogger().setLevel(Level.TRACE);
+        //Logger.getRootLogger().addAppender(new ConsoleAppender(new PatternLayout("%p %c %x - %m%n")));
+        //Logger.getRootLogger().setLevel(Level.TRACE);
         MainApp app = new MainApp();
         app.configure("Operations.xls", "Operations (1).xls", "Operations (2).xls", "Operations (3).xls");
         app.setStartAccountState(0);
@@ -75,7 +76,7 @@ public class MainApp {
     private Statement statement;
 
     public void configure(String... string) throws SAXException, IOException, ParserConfigurationException {
-        payments = PaymentFactory.readPayments(string);
+        payments = ExcelPaymentFactory.readPayments(string);
         sortPayments();
     }
 
@@ -119,7 +120,7 @@ public class MainApp {
     }
 
     public void loadStatement(Document parse) throws SAXException, IOException, ParserConfigurationException {
-        PaymentFactory.read(parse, payments);
+        ExcelPaymentFactory.read(parse, payments);
         sortPayments();
     }
 

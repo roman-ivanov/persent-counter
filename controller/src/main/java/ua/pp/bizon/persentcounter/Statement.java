@@ -6,10 +6,16 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import static ua.pp.bizon.persentcounter.Utils.round;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import ua.pp.bizon.persentcounter.controller.Day;
+import ua.pp.bizon.persentcounter.controller.Payment;
+import ua.pp.bizon.persentcounter.controller.Persents;
+import ua.pp.bizon.persentcounter.controller.Utils;
+import static ua.pp.bizon.persentcounter.controller.Utils.round;
+
+@Deprecated
 public class Statement {
 
     private Day persents;
@@ -35,7 +41,7 @@ public class Statement {
                 return;
             }
         }
-        LogFactory.getLog(getClass()).info("cant add payment:" + p);
+       log.info("cant add payment:" + p);
     }
 
     @Deprecated
@@ -48,14 +54,16 @@ public class Statement {
         return round(ret, 2);
     }
 
-    private Log log = LogFactory.getLog(getClass());
+    private Logger log = LoggerFactory.getLogger(getClass());
 
+    @Deprecated
     public void count(double persent, int billingDayOfYearCount, List<Persents> billingDays) throws ParseException {
         for (Persents p : billingDays) {
             count(persent, billingDayOfYearCount, p);
         }
     }
 
+    @Deprecated
     public void count(double persent, int billingDayOfYearCount, Persents billingPeriod) throws ParseException {
         double res = 0;
         for (Day i = persents; i != null; i = i.getNext()) {

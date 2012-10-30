@@ -1,10 +1,11 @@
-package ua.pp.bizon.persentcounter;
+package ua.pp.bizon.persentcounter.controller;
 
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+
 
 public class Controller {
 
@@ -23,6 +24,9 @@ public class Controller {
     }
 
     public void addPayments(List<Payment> payments) {
+        if (payments == null || payments.size() == 0){
+            return;
+        }
         Payment lastPayment = payments.get(payments.size() - 1);
         Payment firstPayment = payments.get(0);
         if (billingPeriods.isEmpty()) {

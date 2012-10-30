@@ -5,37 +5,33 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.io.IOUtils;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
-import org.xml.sax.SAXException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import ua.pp.bizon.persentcounter.Controller;
-import ua.pp.bizon.persentcounter.Payment;
-import ua.pp.bizon.persentcounter.PaymentFactory;
+import ua.pp.bizon.persentcounter.controller.BillingPeriod;
+import ua.pp.bizon.persentcounter.controller.Controller;
+import ua.pp.bizon.persentcounter.controller.PaymentFactory;
+import ua.pp.bizon.persentcounter.controller.Utils;
+import ua.pp.bizon.persentcounter.controller.rtf.RTFDocument;
+import ua.pp.bizon.persentcounter.controller.rtf.Rtf2String;
 
 @ManagedBean(name = "statement")
 @SessionScoped
 public class StatementBean {
-    
-    private Log log = LogFactory.getLog(getClass());
+
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     private Controller controller = new Controller();
 
     private UploadedFile uploadedFile;
 
-    private String name = "";
+    private String upText = "";
 
-    public Controller getController() {
-        return controller;
-    }
-
-    public String getId() {
-        return "qwe";
+    public List<BillingPeriod> getBillingPeriods() {
+        return controller.getBillingPeriods();
     }
 
     public UploadedFile getUpFile() {
@@ -46,31 +42,36 @@ public class StatementBean {
         uploadedFile = upFile;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void upload() throws IOException {
         try {
-            List<Payment> payments = PaymentFactory.read( DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(uploadedFile.getInputStream()));
-            controller.addPayments(payments);
-            log.info("loaded " + payments.size() + " payments");
+            if (uploadedFile != null && uploadedFile.getInputStream() != null && uploadedFile.getSize() > 1) {
+                PaymentFactory.read(uploadedFile.getInputStream(), controller);
+            } else if (getUpText() != null && !getUpText().isEmpty()){
+                RTFDocument document = Rtf2String.parse(getUpText());
+                log.debug("payments size: " + document.getPayments().size());
+                controller.addPayments(Utils.sort(document.getPayments()));
+                controller.getBillingPeriods().get(0).getDays().getFirst().setStartBalance(document.getStartBalanse());
+            }
             return;
-        }  catch (Exception e) {
-           log.fatal(e.getMessage(), e);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
         return;
     }
-    
+
     public void clear() {
         controller.getBillingPeriods().clear();
     }
 
     public boolean isUploaded() {
         return !controller.getBillingPeriods().isEmpty();
+    }
+
+    public String getUpText() {
+        return upText;
+    }
+
+    public void setUpText(String upText) {
+        this.upText = upText;
     }
 }

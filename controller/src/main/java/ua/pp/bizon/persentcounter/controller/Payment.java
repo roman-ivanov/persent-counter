@@ -1,8 +1,8 @@
-package ua.pp.bizon.persentcounter;
+package ua.pp.bizon.persentcounter.controller;
 
 import java.util.Date;
 
-import static ua.pp.bizon.persentcounter.Utils.dateToString;
+import static ua.pp.bizon.persentcounter.controller.Utils.dateToString;
 
 public class Payment {
     private Date holdingData;

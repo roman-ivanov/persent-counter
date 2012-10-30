@@ -1,4 +1,4 @@
-package ua.pp.bizon.persentcounter;
+package ua.pp.bizon.persentcounter.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

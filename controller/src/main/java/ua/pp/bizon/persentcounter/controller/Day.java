@@ -1,11 +1,14 @@
-package ua.pp.bizon.persentcounter;
+package ua.pp.bizon.persentcounter.controller;
+
+import static ua.pp.bizon.persentcounter.controller.Utils.dateToString;
 
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import static ua.pp.bizon.persentcounter.Utils.dateToString;
+import org.slf4j.LoggerFactory;
+
 
 public class Day {
 
@@ -124,6 +127,14 @@ public class Day {
         next.prev = this;
         next.balanse = null;
         next.startBalance = null;
+    }
+    
+    public void setStartBalance(Double startBalance) {
+        if (this.prev == null){
+            this.startBalance = startBalance;
+        } else {
+            LoggerFactory.getLogger(getClass()).error("cant set start balanse " + startBalance + " to " + this);
+        }
     }
 
 }

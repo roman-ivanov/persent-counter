@@ -18,6 +18,11 @@
         <h:message for="fileupload" showDetail="true" />
         <h:commandButton value="upload" action="#{statement.upload}" />
     </h:form>
+    <h:form enctype="multipart/form-data">
+        <h:outputText value="set text" />
+        <t:inputTextarea cols="80" rows="40" id="textupload" value="#{statement.upText}" required="true" />
+        <h:commandButton value="push" action="#{statement.upload}" />
+    </h:form>
     <h:form >
          <h:commandButton value="clear uploaded data" action="#{statement.clear}" />
     </h:form>
@@ -28,7 +33,7 @@
     <c:if test="#{statement.uploaded}">
     Billing:
         <ul>
-            <c:forEach items="#{statement.controller.billingPeriods}" var="i">
+            <c:forEach items="#{statement.billingPeriods}" var="i">
                 <li>Billing period: from: #{i.fromDate} to: #{i.toDate} <h:form>Persents:
                     <h:inputText value="#{i.persents}"></h:inputText>
                         <h:commandButton value="set" action="#{i.calculate}" />

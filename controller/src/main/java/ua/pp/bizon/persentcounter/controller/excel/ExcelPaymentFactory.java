@@ -1,26 +1,47 @@
-package ua.pp.bizon.persentcounter;
+package ua.pp.bizon.persentcounter.controller.excel;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
+import java.util.List;
 
+import javax.swing.text.BadLocationException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class PaymentFactory {
-    
+import ua.pp.bizon.persentcounter.controller.Controller;
+import ua.pp.bizon.persentcounter.controller.Payment;
+import ua.pp.bizon.persentcounter.controller.PaymentFactory;
+import ua.pp.bizon.persentcounter.controller.Utils;
 
-    private static final Log log = LogFactory.getLog(PaymentFactory.class);
+public class ExcelPaymentFactory extends PaymentFactory {
     
+    @Override
+    public String getSignature() {
+        return "<?xml";
+    }
+    
+    @Override
+    public void process(InputStream stream, Controller controller) throws IOException, BadLocationException, SAXException, ParserConfigurationException {
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
+        List<Payment> payments = read(document);
+        controller.addPayments(payments);
+    }
+
+    private static final Logger log = LoggerFactory.getLogger(ExcelPaymentFactory.class);
+    
+    @Deprecated
     public static LinkedList<Payment> readPayments(String... paths) throws SAXException, IOException, ParserConfigurationException{
         LinkedList<Payment> payments = new LinkedList<Payment>();
         for (String path : paths){
