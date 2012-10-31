@@ -1,1 +1,13 @@
 target/
+
+controller/src/test/resources/ua/pp/bizon/persentcounter/1.rtf
+
+controller/src/test/resources/ua/pp/bizon/persentcounter/1.txt
+
+controller/src/test/resources/ua/pp/bizon/persentcounter/2.txt
+
+web/ROOT-0.0.3.war
+
+web/.settings/org.eclipse.jdt.core.prefs
+
+web/.settings/org.eclipse.jdt.core.prefs

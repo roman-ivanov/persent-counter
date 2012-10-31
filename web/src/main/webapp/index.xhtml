@@ -40,7 +40,7 @@
                     </h:form> Days:
                     <ul>
                         <c:forEach items="#{i.days}" var="day">
-                            <li>Day: #{day.billingDate} billing balance: #{day.balanceEndDay} persents for day: #{day.persentsCountedForDay}
+                            <li>Day: #{day.billingDate} billing balance: #{day.balanceBeforeBilling} end day balance: #{day.balanceEndDay} persents for day: #{day.persentsCountedForDay}
                                 <ul>
                                     <c:forEach items="#{day.payments}" var="p">
                                         <li>#{p}</li>
