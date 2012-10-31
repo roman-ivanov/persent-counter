@@ -9,85 +9,93 @@ import java.util.List;
 
 import org.slf4j.LoggerFactory;
 
-
-public class Day {
+public strictfp class Day {
 
     private Date billingDate;
     private Day next;
     private Day prev;
     private double persentsCountedForDay;
     private List<Payment> payments = new LinkedList<Payment>();
-    private Double balanse = null;
+    private Double balanceBeforeBilling = null;
+    private Double balanceEndDay = null;
 
-    private Double startBalance;
+    private Double balanceStartDay;
 
     public Day(Date from, double startBalance) {
         this(from);
-        this.startBalance = startBalance;
+        this.balanceStartDay = startBalance;
     }
 
     private Day(Date date) {
         this.billingDate = date;
     }
 
-    public Day(Date toAdd, Day prev) {
-        this(toAdd);
+    public Day(Day prev) {
+        this(new Date(prev.billingDate.getTime() + 86400000));
         this.prev = prev;
         prev.next = this;
-        this.startBalance = null;
+        this.balanceStartDay = null;
     }
 
     public Date getBillingDate() {
         return billingDate;
     }
-    
+
     public List<Payment> getPayments() {
         return payments;
     }
 
-    public double getBalanceEndDay() {
-        if (balanse == null) {
-            balanse = (prev == null ? startBalance : prev.getBalanceEndDay()) + calculateFlowFounds();
+    public double getBalanceBeforeBilling() {
+        if (balanceBeforeBilling == null) {
+            calculateBalance();
         }
-        return Utils.round(balanse, 2);
+        return balanceBeforeBilling;
     }
 
-    protected double calculateFlowFounds() {
-        double flowFounds = 0.0;
-        for (Payment p : payments) {
-            if (p.getBillingAmount() < 0 && !p.getDescription().equals("service")){
-               flowFounds += p.getBillingAmount();
+    public Double getBalanceEndDay() {
+        if (balanceEndDay == null) {
+            calculateBalance();
+        }
+        return balanceEndDay;
+    }
+
+    protected synchronized Double calculateBalance() {
+        if (balanceStartDay == null) {
+            balanceStartDay = prev.getBalanceEndDay();
+        }
+        Double charges = 0.0;
+        for (Payment i : payments) {
+            if (i.getBillingAmount() < 0) {
+                charges += i.getBillingAmount();
             }
         }
-        if (prev != null){
-            for (Payment p : prev.payments) {
-                if (p.getBillingAmount() > 0 || p.getDescription().equals("service")){
-                   flowFounds += p.getBillingAmount();
-                }
-            }   
+        balanceBeforeBilling = balanceStartDay + charges;
+        for (Payment i : payments) {
+            if (i.getBillingAmount() > 0) {
+                charges += i.getBillingAmount();
+            }
         }
-        return  Utils.round(flowFounds, 2);
+        balanceEndDay = Utils.round(balanceStartDay + charges, 2);
+        return charges;
     }
 
     public String toStringNext() {
-        return toStringNoNext() +  (next == null ? "" : "\n" + next);
+        return toStringNoNext() + (next == null ? "" : "\n" + next);
     }
-    
+
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         return toStringNoNext();
     }
-    
-    
+
     public String toStringNoNext() {
-        return "" + dateToString(billingDate) + " " + (prev == null ? "startBalanse=" + startBalance : "counted=" + getBalanceEndDay()) + ", persentsFarDay="
-                + getPersentsCountedForDay() + ", motion=" + calculateFlowFounds();
+        return "" + dateToString(billingDate) + " " + (prev == null ? "startBalanse=" + balanceStartDay : "counted=" + getBalanceBeforeBilling())
+                + ", persentsFarDay=" + getPersentsCountedForDay() + ", motion=" + calculateBalance();
     }
-    
-    public String paymentsToString(){
-        Iterator<Payment> i =payments.iterator();
-        if (! i.hasNext())
+
+    public String paymentsToString() {
+        Iterator<Payment> i = payments.iterator();
+        if (!i.hasNext())
             return "\n\tNo Payments";
 
         StringBuilder sb = new StringBuilder();
@@ -95,15 +103,15 @@ public class Day {
         for (;;) {
             Payment e = i.next();
             sb.append(e);
-            if (! i.hasNext())
-            return sb.toString();
+            if (!i.hasNext())
+                return sb.toString();
             sb.append("\n\t");
         }
     }
 
     public void addPayment(Payment p) {
         payments.add(p);
-        balanse = null;
+        balanceBeforeBilling = null;
     }
 
     public double getPersentsCountedForDay() {
@@ -125,13 +133,13 @@ public class Day {
     public void setNext(Day next) {
         this.next = next;
         next.prev = this;
-        next.balanse = null;
-        next.startBalance = null;
+        next.balanceBeforeBilling = null;
+        next.balanceStartDay = null;
     }
-    
+
     public void setStartBalance(Double startBalance) {
-        if (this.prev == null){
-            this.startBalance = startBalance;
+        if (this.prev == null) {
+            this.balanceStartDay = startBalance;
         } else {
             LoggerFactory.getLogger(getClass()).error("cant set start balanse " + startBalance + " to " + this);
         }

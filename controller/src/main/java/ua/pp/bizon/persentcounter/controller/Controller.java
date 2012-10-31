@@ -94,13 +94,11 @@ public class Controller {
     protected void configure(BillingPeriod period, Date from, Date to) {
         LinkedList<Day> days = period.getDays();
         days.add(new Day(from, 0));
-        Date toAdd = (Date) from.clone();
         Day prev = days.getFirst();
         do {
-            toAdd = new Date(toAdd.getTime() + 86400000);
-            prev = new Day(toAdd, prev);
+            prev = new Day(prev);
             days.add(prev);
-        } while (toAdd.before(to));
+        } while (prev.getBillingDate().before(to));
     }
 
 }

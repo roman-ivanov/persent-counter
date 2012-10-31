@@ -84,7 +84,7 @@ public class BillingPeriod {
             daysCount = 366;
         }
         for (Day i : days) {
-            i.setPersentsCountedForDay(round(i.getBalanceEndDay() * persents / daysCount, 2));
+            i.setPersentsCountedForDay(round(i.getBalanceBeforeBilling() * persents / daysCount, 2));
         }
     }
 

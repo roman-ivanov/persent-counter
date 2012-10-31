@@ -26,12 +26,10 @@ public class Statement {
 
     protected void init(Date from, Date to, double startBalance) {
         persents = new Day(from, startBalance);
-        Date toAdd = (Date) from.clone();
         Day prev = persents;
         do {
-            toAdd = new Date(toAdd.getTime() + 86400000);
-            prev = new Day(toAdd, prev);
-        } while (!toAdd.after(to));
+            prev = new Day(prev);
+        } while (!prev.getBillingDate().after(to));
     }
 
     public void addPayment(Payment p) {
@@ -48,7 +46,7 @@ public class Statement {
     public Double count(double persent, int billingDayOfYearCount) {
         double ret = 0;
         for (Day i = persents; i != null; i = i.getNext()) {
-            i.setPersentsCountedForDay(round(i.getBalanceEndDay() * persent / billingDayOfYearCount, 2));
+            i.setPersentsCountedForDay(round(i.getBalanceBeforeBilling() * persent / billingDayOfYearCount, 2));
             ret += i.getPersentsCountedForDay();
         }
         return round(ret, 2);
@@ -67,7 +65,7 @@ public class Statement {
     public void count(double persent, int billingDayOfYearCount, Persents billingPeriod) throws ParseException {
         double res = 0;
         for (Day i = persents; i != null; i = i.getNext()) {
-            i.setPersentsCountedForDay(round(i.getBalanceEndDay() * persent / billingDayOfYearCount, 2));
+            i.setPersentsCountedForDay(round(i.getBalanceBeforeBilling() * persent / billingDayOfYearCount, 2));
             if (billingPeriod.getFrom().after(i.getBillingDate())) {
                 log.trace("scipped persents: " + i.toStringNoNext());
                 continue;
@@ -91,7 +89,7 @@ public class Statement {
     public Double endBalanse() {
         for (Day i = persents; i != null; i = i.getNext()) {
             if (i.getNext() == null) {
-                return round(i.getBalanceEndDay(), 2);
+                return round(i.getBalanceBeforeBilling(), 2);
             }
         }
         return Double.NaN;
